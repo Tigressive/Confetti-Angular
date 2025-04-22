@@ -17,7 +17,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.confettiService.init();
-
   }
 
   celebrate(): void {
@@ -25,7 +24,7 @@ export class AppComponent implements OnInit {
       const rect = this.confettiBtn.nativeElement.getBoundingClientRect();
       const startX = rect.left + rect.width / 2;
       const startY = rect.top + rect.height / 2;
-      this.confettiService.launch(600, startX, startY);
+      this.confettiService.launch(600);
     }
   }
 

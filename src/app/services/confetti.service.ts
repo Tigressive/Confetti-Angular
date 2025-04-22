@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 interface Particle {
   x: number;
@@ -11,18 +11,24 @@ interface Particle {
   color: string;
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class ConfettiService {
   private canvas!: HTMLCanvasElement;
   private ctx!: CanvasRenderingContext2D;
   private particles: Particle[] = [];
   private animating = false;
 
-
+  /** Call once on app start to inject the full‑screen canvas */
   init(): void {
     this.canvas = document.createElement('canvas');
     Object.assign(this.canvas.style, {
-      position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', pointerEvents: 'none', zIndex: '9999'
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      width: '100%',
+      height: '100%',
+      pointerEvents: 'none',
+      zIndex: '9999'
     });
     document.body.appendChild(this.canvas);
     this.ctx = this.canvas.getContext('2d')!;
@@ -32,36 +38,27 @@ export class ConfettiService {
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
     });
-
+    // set initial size
     window.dispatchEvent(new Event('resize'));
   }
 
-
-  launch(count = 400, startX = this.canvas.width / 2, startY = this.canvas.height / 2): void {
-    const coneAngle = Math.PI / 2; // 60 degree cone
-    const coneDirection = Math.PI / 2; // Upwards (in radians)
-
+  /** Spawn “count” new confetti pieces and kick off animation */
+  launch(count = 100): void {
+    const w = this.canvas.width, h = this.canvas.height;
     for (let i = 0; i < count; i++) {
-      // Spread angle within the cone
-      const angle = coneDirection + (Math.random() - 0.5) * coneAngle;
-
-      // Speed magnitude (randomized)
-      const speed = 2 + Math.random() * 2;
-
       this.particles.push({
-        x: startX,
-        y: startY,
+        x: Math.random() * w,
+        y: h + 10,
         size: 5 + Math.random() * 5,
         tilt: Math.random() * 10 - 10,
         tiltSpeed: Math.random() * 0.1 + 0.05,
-        velocityX: Math.cos(angle) * speed,
-        velocityY: Math.sin(angle) * speed,
-        color: `hsl(${Math.floor(Math.random() * 360)}, 100%, 50%)`
+        velocityX: (Math.random() - 0.5) * 2,
+        velocityY: -(2 + Math.random() * 3),
+        color: `hsl(${Math.floor(Math.random()*360)}, 100%, 50%)`
       });
     }
     if (!this.animating) this.animate();
   }
-
 
   private animate(): void {
     this.animating = true;
@@ -73,10 +70,18 @@ export class ConfettiService {
       p.x += p.velocityX;
       p.y += p.velocityY;
       p.tilt += p.tiltSpeed;
-
+      // draw a little rotated rectangle
       this.ctx.fillStyle = p.color;
       this.ctx.beginPath();
-      this.ctx.ellipse(p.x + Math.sin(p.tilt) * 5, p.y, p.size * 0.4, p.size, p.tilt, 0, Math.PI * 2, true);
+      this.ctx.ellipse(
+        p.x + Math.sin(p.tilt) * 5,
+        p.y,
+        p.size * 0.4,
+        p.size,
+        p.tilt,
+        0,
+        Math.PI * 2
+      );
       this.ctx.fill();
     }
 
