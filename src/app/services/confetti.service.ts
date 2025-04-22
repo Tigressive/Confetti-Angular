@@ -37,8 +37,8 @@ export class ConfettiService {
   }
 
 
-  launch(count = 100, startX = this.canvas.width / 2, startY = this.canvas.height / 2): void {
-    const coneAngle = Math.PI / 3; // 60 degree cone
+  launch(count = 400, startX = this.canvas.width / 2, startY = this.canvas.height / 2): void {
+    const coneAngle = Math.PI / 2; // 60 degree cone
     const coneDirection = Math.PI / 2; // Upwards (in radians)
 
     for (let i = 0; i < count; i++) {
@@ -46,7 +46,7 @@ export class ConfettiService {
       const angle = coneDirection + (Math.random() - 0.5) * coneAngle;
 
       // Speed magnitude (randomized)
-      const speed = 2 + Math.random() * 5;
+      const speed = 2 + Math.random() * 2;
 
       this.particles.push({
         x: startX,
